@@ -1,2 +1,6 @@
+skipGraph3D/**/*.png filter=lfs diff=lfs merge=lfs -text
+skipGraph3D/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+skipGraph3D/**/*.obj filter=lfs diff=lfs merge=lfs -text
+skipGraph3D/**/*.fbx filter=lfs diff=lfs merge=lfs -text
 builds/**/*.resS filter=lfs diff=lfs merge=lfs -text
 builds/**/*.exe filter=lfs diff=lfs merge=lfs -text
