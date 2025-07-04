@@ -6,3 +6,4 @@ colorama
 PySide6
 qt_material
 requests
+websockets==12
