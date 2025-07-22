@@ -1,52 +1,48 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
+// using System.Diagnostics; // â­ ã“ã®è¡Œã‚’å‰Šé™¤ã¾ãŸã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã™ã‚‹ â­
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
     private static readonly Queue<Action> _executionQueue = new Queue<Action>();
-    private static UnityMainThreadDispatcher _instance = null;
+    private static UnityMainThreadDispatcher _instance;
 
-    // ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾‚·‚é‚½‚ß‚ÌŒöŠJƒvƒƒpƒeƒB
     public static UnityMainThreadDispatcher Instance
     {
         get
         {
             if (_instance == null)
             {
-                // ƒV[ƒ““à‚©‚çƒCƒ“ƒXƒ^ƒ“ƒX‚ğ’T‚·
                 _instance = FindObjectOfType<UnityMainThreadDispatcher>();
                 if (_instance == null)
                 {
-                    // Œ©‚Â‚©‚ç‚È‚¯‚ê‚ÎƒGƒ‰[‚ğo‚·
-                    UnityEngine.Debug.LogError("UnityMainThreadDispatcher instance not found in the scene.");
+                    GameObject singletonObject = new GameObject("UnityMainThreadDispatcher");
+                    _instance = singletonObject.AddComponent<UnityMainThreadDispatcher>();
+                    DontDestroyOnLoad(singletonObject);
+                    // Debug.Log("UnityMainThreadDispatcher: New instance created automatically."); 
                 }
             }
             return _instance;
         }
     }
 
-    // Unity‚Ìƒ‰ƒCƒtƒTƒCƒNƒ‹‚ÅAƒIƒuƒWƒFƒNƒg‚ª—LŒø‚É‚È‚Á‚½‚ÉŒÄ‚Î‚ê‚é
     private void Awake()
     {
-        // ‚Ü‚¾ƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚µ‚È‚¢ê‡
-        if (_instance == null)
+        if (_instance != null && _instance != this)
         {
-            // ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ğ—Bˆê‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Æ‚µ‚Äİ’è
-            _instance = this;
-            // ƒV[ƒ“‚ğØ‚è‘Ö‚¦‚Ä‚à‚±‚ÌƒIƒuƒWƒFƒNƒg‚ª”j‰ó‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚é
-            DontDestroyOnLoad(this.gameObject);
-        }
-        // Šù‚É•Ê‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª‘¶İ‚·‚éê‡
-        else if (_instance != this)
-        {
-            // ‚±‚ÌƒIƒuƒWƒFƒNƒg‚Í•s—v‚È‚Ì‚Å”jŠü‚·‚é
+            // Debug.LogWarning ã®å‰ã« UnityEngine. ã‚’æ˜ç¤ºçš„ã«ã¤ã‘ã‚‹
+            UnityEngine.Debug.LogWarning("UnityMainThreadDispatcher: Duplicate instance detected. Destroying this one.", this);
             Destroy(gameObject);
+        }
+        else if (_instance == null)
+        {
+            _instance = this;
+            DontDestroyOnLoad(this.gameObject);
+            // Debug.Log("UnityMainThreadDispatcher: First instance established.");
         }
     }
 
-    // ƒƒCƒ“ƒXƒŒƒbƒh‚ÅÀs‚µ‚½‚¢ˆ—‚ğƒLƒ…[‚É’Ç‰Á‚·‚é
     public void Enqueue(Action action)
     {
         lock (_executionQueue)
@@ -55,7 +51,6 @@ public class UnityMainThreadDispatcher : MonoBehaviour
         }
     }
 
-    // –ˆƒtƒŒ[ƒ€ŒÄ‚Î‚êAƒLƒ…[‚É‚½‚Ü‚Á‚½ˆ—‚ğÀs‚·‚é
     private void Update()
     {
         lock (_executionQueue)

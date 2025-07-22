@@ -9,6 +9,16 @@
             "console": "integratedTerminal", // 出力を統合ターミナルに表示
             "args": [], // GUIスクリプト自体には通常、直接コマンドライン引数を渡さない
             "cwd": "${workspaceFolder}/gui/" // GUIスクリプトの作業ディレクトリ
+        },
+        {
+            "name": "Launch All sgsim Components", // 新しい設定の名前
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/sgsim-py313/src/launch_all.py", // launch_all.py のパス
+            "console": "integratedTerminal",
+            "args": [],
+            "cwd": "${workspaceFolder}/sgsim-py313/src/", // launch_all.py の作業ディレクトリ
+            "justMyCode": false // 外部ライブラリのデバッグも許可する場合
         }
     ]
 }

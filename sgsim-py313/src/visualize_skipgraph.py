@@ -1,4 +1,5 @@
 #実ノード可視化コード
+
 import socket
 import threading
 import time
@@ -9,6 +10,12 @@ import sys
 LEVELS = 4   # ノード側と揃えて（32推奨・デモなら4）
 
 DISCOVERED_NODES = {}  # {ip: {"key":..., "mv":..., "neighbors":[...]}}
+
+import matplotlib.pyplot as plt
+
+LEVELS = 4
+DISCOVERED_NODES = {}
+
 
 def listen_for_nodes(port=12000):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -22,6 +29,7 @@ def listen_for_nodes(port=12000):
             DISCOVERED_NODES[ip] = info
         except Exception:
             continue
+
 
 # ノード情報取得（HTTP GET）
 def fetch_node_info(ip):
@@ -95,3 +103,45 @@ if __name__ == "__main__":
         plt.show()
     except ImportError:
         print("matplotlib未インストールのためグラフ化はスキップ")
+    except Exception as e: # 例外の内容も表示するとデバッグに役立ちます
+        print(f"グラフ化中に予期せぬエラーが発生しました: {e}")
+        # return None は削除するか、sys.exit() に変更
+        # sys.exit(1) # スクリプトを強制終了したい場合
+        pass # 何もせず、エラーを無視して続行したい場合
+
+def plot_skipgraph(nodes):
+    plt.clf()
+    y = 1
+    for node in nodes:
+        x = node['key']
+        plt.plot(x, y, "o", label=f"N{x}")
+        for neighbor in node.get('neighbors', []):
+            for l in ['LEFT', 'RIGHT']:
+                for nkey in neighbor[l]:
+                    plt.plot([x, nkey], [y, y], "k--", lw=0.7)
+    plt.yticks([])
+    plt.xlabel("Key")
+    plt.title("SkipGraph(UDP/HTTP)")
+    plt.legend()
+    plt.tight_layout()
+    plt.pause(0.1)
+
+if __name__ == "__main__":
+    print("動的探索モードでSkipGraphノードを可視化します")
+    threading.Thread(target=listen_for_nodes, daemon=True).start()
+
+    plt.ion()  # インタラクティブ
+    plt.figure(figsize=(7, 2))
+    try:
+        while True:
+            ips = list(DISCOVERED_NODES.keys())
+            nodes = []
+            for ip in ips:
+                info = fetch_node_info(ip)
+                if info:
+                    nodes.append(info)
+            if nodes:
+                plot_skipgraph(nodes)
+            time.sleep(2)
+    except KeyboardInterrupt:
+        print("終了")
