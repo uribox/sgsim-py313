@@ -47,13 +47,23 @@ SGSIM_MAIN_SCRIPT = (CURRENT_SCRIPT_DIR / "sg_main.py").as_posix()
 # --- Helper for launching processes ---
 def launch_process(command, name="Process"):
     print(f"🚀 Launching {name} with command: {' '.join(command)}")
-    creation_flags = subprocess.CREATE_NEW_CONSOLE if sys.platform == "win32" else 0
-    
-    if command[0] == sys.executable:
-        return subprocess.Popen(command, creationflags=creation_flags)
-    else:
-        return subprocess.Popen(command, shell=False, creationflags=creation_flags)
 
+    creation_flags = subprocess.CREATE_NEW_CONSOLE if sys.platform == "win32" else 0
+
+    if command[0] == sys.executable: # Pythonスクリプトの場合 (sg_main.pyなど)
+        return subprocess.Popen(
+            command, 
+            creationflags=creation_flags, # ⭐ この行が有効になっているか ⭐
+            text=True, 
+            encoding='utf-8', 
+            errors='replace'
+        )
+    else: # Unityアプリなど
+        return subprocess.Popen(
+            command, 
+            shell=False, 
+            creationflags=creation_flags # ⭐ この行が有効になっているか ⭐
+        )
 
 def main():
     processes = []
