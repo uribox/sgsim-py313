@@ -1,21 +1,11 @@
-#実ノード可視化コード
-
-import socket
-import threading
-import time
-import requests
-import json
-import sys
-
-LEVELS = 4   # ノード側と揃えて（32推奨・デモなら4）
-
-DISCOVERED_NODES = {}  # {ip: {"key":..., "mv":..., "neighbors":[...]}}
-
+import socket, threading, time, requests, json
 import matplotlib.pyplot as plt
+import sg_draw
+import sg                          # sg_draw が参照するので import 必須
+from realtime_node import RealNode  # ← 作ったやつ
 
 LEVELS = 4
 DISCOVERED_NODES = {}
-
 
 def listen_for_nodes(port=12000):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -25,123 +15,58 @@ def listen_for_nodes(port=12000):
         msg, addr = s.recvfrom(1024)
         try:
             info = json.loads(msg.decode())
-            ip = addr[0]
-            DISCOVERED_NODES[ip] = info
+            DISCOVERED_NODES[addr[0]] = info
         except Exception:
-            continue
+            pass
 
-
-# ノード情報取得（HTTP GET）
 def fetch_node_info(ip):
-    url = f"http://{ip}:8000/"
     try:
-        resp = requests.get(url, timeout=2)
-        return resp.json()
-    except Exception as e:
+        r = requests.get(f"http://{ip}:8000/", timeout=1.5)
+        return r.json()
+    except Exception:
         return None
 
-def print_skipgraph(nodes):
-    print("=== SkipGraph Nodes ===")
-    for n in nodes:
-        print(f"node[{n['key']}] (mv={n['mv']})")
-        for neighbor in n.get('neighbors', []):
-            l = neighbor['level']
-            lefts = neighbor['LEFT']
-            rights = neighbor['RIGHT']
-            print(f"  Level {l}: LEFT={['N'+str(k) for k in lefts]} RIGHT={['N'+str(k) for k in rights]}")
-        uniq = set()
-        for neighbor in n.get('neighbors', []):
-            uniq.update(neighbor['LEFT'])
-            uniq.update(neighbor['RIGHT'])
-        uniq.discard(None)
-        print(f"  # of unique nodes: {len([u for u in uniq if u is not None])}")
-    print()
+# ---------- ここがポイント ----------
+def plot_skipgraph(ax, nodes_json):
+    ax.clear()
 
-if __name__ == "__main__":
-    print("Searching for SkipGraph nodes on UDP:12000 ...")
-    threading.Thread(target=listen_for_nodes, daemon=True).start()
-    time.sleep(3)   # ノードを探索する猶予（適宜調整）
+    if not nodes_json:
+        ax.text(0.5, 0.5, "no nodes yet", transform=ax.transAxes,
+                ha="center", va="center")
+        return
 
-    ips = list(DISCOVERED_NODES.keys())
-    if not ips:
-        print("ノードが見つかりませんでした。")
-        sys.exit(1)
-    print("Found nodes: ", ips)
+    # JSON → RealNode
+    rnodes = [RealNode(n["key"], n["mv"], n["neighbors"]) for n in nodes_json]
 
-    # 各ノードにHTTPで問い合わせ
-    nodes = []
-    for ip in ips:
-        info = fetch_node_info(ip)
-        if info:
-            nodes.append(info)
-        else:
-            print(f"FAILED to fetch node info from {ip}:8000")
+    # 表示レベル算出
+    max_lvl = 0
+    for n in nodes_json:
+        if n["neighbors"]:
+            max_lvl = max(max_lvl, max(nb["level"] for nb in n["neighbors"]))
 
-    if not nodes:
-        print("どのノードからも情報が取れませんでした。")
-        sys.exit(1)
+    # sg_draw の描画をそのまま使う
+    sg_draw.render_topology_base(ax, rnodes, max_lvl)
 
-    print_skipgraph(nodes)
-
-    # （Optional）matplotlibでサークルプロットもOK
-    try:
-        import matplotlib.pyplot as plt
-        plt.figure(figsize=(7, 2))
-        y = 1
-        for node in nodes:
-            x = node['key']
-            plt.plot(x, y, "o", label=f"N{x}")
-            for neighbor in node.get('neighbors', []):
-                for l in ['LEFT', 'RIGHT']:
-                    for nkey in neighbor[l]:
-                        plt.plot([x, nkey], [y, y], "k--", lw=0.7)
-        plt.yticks([])
-        plt.xlabel("Key")
-        plt.title("SkipGraph(UDP/HTTP)")
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-    except ImportError:
-        print("matplotlib未インストールのためグラフ化はスキップ")
-    except Exception as e: # 例外の内容も表示するとデバッグに役立ちます
-        print(f"グラフ化中に予期せぬエラーが発生しました: {e}")
-        # return None は削除するか、sys.exit() に変更
-        # sys.exit(1) # スクリプトを強制終了したい場合
-        pass # 何もせず、エラーを無視して続行したい場合
-
-def plot_skipgraph(nodes):
-    plt.clf()
-    y = 1
-    for node in nodes:
-        x = node['key']
-        plt.plot(x, y, "o", label=f"N{x}")
-        for neighbor in node.get('neighbors', []):
-            for l in ['LEFT', 'RIGHT']:
-                for nkey in neighbor[l]:
-                    plt.plot([x, nkey], [y, y], "k--", lw=0.7)
-    plt.yticks([])
-    plt.xlabel("Key")
-    plt.title("SkipGraph(UDP/HTTP)")
-    plt.legend()
-    plt.tight_layout()
-    plt.pause(0.1)
+    # 再描画
+    ax.figure.canvas.draw_idle()
+    ax.figure.canvas.flush_events()
+# -----------------------------------
 
 if __name__ == "__main__":
     print("動的探索モードでSkipGraphノードを可視化します")
     threading.Thread(target=listen_for_nodes, daemon=True).start()
 
-    plt.ion()  # インタラクティブ
-    plt.figure(figsize=(7, 2))
+    plt.ion()
+    fig, ax = plt.subplots(figsize=(10, 7.5))
+
     try:
         while True:
-            ips = list(DISCOVERED_NODES.keys())
             nodes = []
-            for ip in ips:
+            for ip in list(DISCOVERED_NODES.keys()):
                 info = fetch_node_info(ip)
                 if info:
                     nodes.append(info)
-            if nodes:
-                plot_skipgraph(nodes)
-            time.sleep(2)
+            plot_skipgraph(ax, nodes)
+            time.sleep(1.0)
     except KeyboardInterrupt:
         print("終了")
