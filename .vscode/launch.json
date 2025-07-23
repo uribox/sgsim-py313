@@ -2,6 +2,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch All sgsim Components", // 新しい設定の名前
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/sgsim-py313/src/launch_all.py", // launch_all.py のパス
+            "console": "integratedTerminal",
+            "args": [],
+            "cwd": "${workspaceFolder}/sgsim-py313/src/", // launch_all.py の作業ディレクトリ
+            "justMyCode": false // 外部ライブラリのデバッグも許可する場合
+        },
+        {
             "name": "Launch sgsim GUI", // 設定の名前をGUI起動用に変更
             "type": "python",
             "request": "launch",
@@ -11,14 +21,14 @@
             "cwd": "${workspaceFolder}/gui/" // GUIスクリプトの作業ディレクトリ
         },
         {
-            "name": "Launch All sgsim Components", // 新しい設定の名前
+            "name": "Launch real nodes", // 新しい設定の名前
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/sgsim-py313/src/launch_all.py", // launch_all.py のパス
+            "program": "${workspaceFolder}/sgsim-py313/src/skipgraph_node.py", // skipgraph_node.py のパス
             "console": "integratedTerminal",
             "args": [],
             "cwd": "${workspaceFolder}/sgsim-py313/src/", // launch_all.py の作業ディレクトリ
             "justMyCode": false // 外部ライブラリのデバッグも許可する場合
-        }
+        },
     ]
 }

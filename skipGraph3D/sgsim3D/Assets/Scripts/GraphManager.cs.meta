@@ -3,7 +3,11 @@ guid: 51c9a6870e8272e408389cc2b6b323c5
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - nodePrefab: {instanceID: 0}
+  - edgePrefab: {instanceID: 0}
+  - graphContainer: {instanceID: 0}
+  - node3DInfoTextPrefab: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

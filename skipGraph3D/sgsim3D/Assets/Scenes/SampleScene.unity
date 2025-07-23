@@ -154,6 +154,7 @@ MonoBehaviour:
   nodePrefab: {fileID: 2009381016222238715, guid: 46c8f75607e1b624f9f4b0053c316cac, type: 3}
   edgePrefab: {fileID: 8750167506445141217, guid: 59c90b3cdf8ec92458e544459a7495de, type: 3}
   graphContainer: {fileID: 1717162661}
+  node3DInfoTextPrefab: {fileID: 8107908127193827825, guid: e1170a6e8d0c07e409470e6c9fe6a1aa, type: 3}
 --- !u!4 &530014455
 Transform:
   m_ObjectHideFlags: 0

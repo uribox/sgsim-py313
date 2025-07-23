@@ -408,7 +408,7 @@ async def websocket_handler(websocket, path):
                         # 送信失敗時のエラーログも残す
                         print(f"🚨 ERROR (websocket_handler): Failed to send via WebSocket: {send_err}")
     
-                await asyncio.sleep(5)
+                await asyncio.sleep(10)
 
             except Exception as e: # ⭐ 外側の try-except は、while ループに入る前に発生するエラー用 ⭐
                 #print(f"WebSocket handler failed to start: {str(e)}")

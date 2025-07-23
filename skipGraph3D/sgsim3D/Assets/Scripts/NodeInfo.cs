@@ -1,19 +1,74 @@
+ï»¿// Assets/Scripts/NodeInfo.cs
 using UnityEngine;
+using TMPro; // TextMeshPro ã‚’ä½¿ã†ãŸã‚
 
 public class NodeInfo : MonoBehaviour
 {
-    public string nodeId;        // —á: "100@0" (key@level Œ`®‚Ìƒ†ƒj[ƒNID)
-    public int nodeKey;          // —á: 100 (˜_—“I‚Èƒm[ƒh‚ÌƒL[)
-    public int nodeLevel;        // —á: 0 (ƒm[ƒh‚ª‘®‚·‚éƒŒƒxƒ‹)
-    public string nodeMvValue;   // —á: "MV(100)" (MembershipVector ‚Ì•¶š—ñ•\Œ»)
 
-    // ƒfƒoƒbƒO•\¦—p (Unity Editor‚ÌInspector‚ÅŠm”F‚Å‚«‚é)
+    public string nodeId;
+    public int nodeKey;
+    public int nodeLevel;
+    public string nodeMvValue;
+
+    // â­ ADDED: 3Dãƒ†ã‚­ã‚¹ãƒˆPrefabã¸ã®å‚ç…§ â­
+    public GameObject nodeInfo3DTextPrefab;
+    private GameObject currentInfoTextInstance; // ç¾åœ¨è¡¨ç¤ºä¸­ã®ãƒ†ã‚­ã‚¹ãƒˆã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+
+    void Awake()
+    {
+        // Debug.Log("NodeInfo Awake on: " + gameObject.name, this);
+    }
+
+    // ãƒ‡ãƒãƒƒã‚°è¡¨ç¤ºç”¨ (Unity Editorã®Inspectorã§ç¢ºèªã§ãã‚‹)
     void OnValidate()
     {
-        // GameObject‚Ì–¼‘O‚ğ ID ‚Æ“¯Šú‚³‚¹‚é (Optional, ƒfƒoƒbƒO‚É•Ö—˜)
         if (!string.IsNullOrEmpty(nodeId) && !gameObject.name.Contains(nodeId))
         {
             gameObject.name = "Node_" + nodeId;
         }
     }
+
+    // â­ ADDED: 3Dæƒ…å ±ãƒ†ã‚­ã‚¹ãƒˆã‚’è¡¨ç¤º/éè¡¨ç¤ºã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ â­
+    public void ToggleInfoDisplay(string infoContent)
+    {
+        if (currentInfoTextInstance == null)
+        {
+            // ã¾ã è¡¨ç¤ºã•ã‚Œã¦ã„ãªã„å ´åˆã¯ç”Ÿæˆã—ã¦è¡¨ç¤º
+            if (nodeInfo3DTextPrefab == null)
+            {
+                Debug.LogError("NodeInfo: nodeInfo3DTextPrefab is not assigned on " + gameObject.name + ". Cannot display 3D text.", this);
+                return;
+            }
+
+            // ã¾ã è¡¨ç¤ºã•ã‚Œã¦ã„ãªã„å ´åˆã¯ç”Ÿæˆã—ã¦è¡¨ç¤º
+            currentInfoTextInstance = Instantiate(nodeInfo3DTextPrefab, transform); // ãƒãƒ¼ãƒ‰ã®å­ã«ã™ã‚‹
+            currentInfoTextInstance.transform.localPosition = new Vector3(0, 1.0f, 0); // ãƒãƒ¼ãƒ‰ã®ä¸Š0.5mã«é…ç½® (èª¿æ•´å¯èƒ½)
+
+            TextMeshPro textMesh = currentInfoTextInstance.GetComponent<TextMeshPro>();
+            if (textMesh != null)
+            {
+                textMesh.text = infoContent;
+            }
+            else
+            {
+                Debug.LogError("NodeInfo: TextMeshPro component not found on NodeInfo3DTextPrefab for " + gameObject.name + ".", this);
+            }
+        }
+        else
+        {
+            // æ—¢ã«è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹å ´åˆã¯éè¡¨ç¤ºï¼ˆã¾ãŸã¯Destroyï¼‰
+            Destroy(currentInfoTextInstance);
+            currentInfoTextInstance = null;
+        }
+    }
+
+    public void HideInfoDisplay()
+    {
+        if (currentInfoTextInstance != null)
+        {
+            Destroy(currentInfoTextInstance);
+            currentInfoTextInstance = null;
+        }
+    }
 }
+

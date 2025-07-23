@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Net.WebSockets; // 必要な場合のみ (ClientWebSocketOptionsなど)
 using System; // Action のため
 using System.Linq; // LINQ メソッド (Where, Select, ToDictionaryなど) のため
-// using TMPro; // TextMeshPro を使う場合 (ノードにテキスト表示するなら)
+using TMPro; // TextMeshPro を使う場合 (ノードにテキスト表示するなら)
+//using Debug = UnityEngine.Debug;
 
 // JSONデータに対応するC#クラス
 [System.Serializable]
@@ -19,7 +20,7 @@ public class NodeData
     public string mv_value;     // PythonのMembershipVectorの値 (string または int)
     public int key;             // Pythonのシミュレーション結果から来るノードの論理キー
     // Pythonが送る可能性のある他のフィールドもここに追加
-    // public int logical_key; 
+    // public int logical_key;  
 }
 
 [System.Serializable]
@@ -46,18 +47,18 @@ public class GraphData
     public string status;
 }
 
-
 public class GraphManager : MonoBehaviour
 {
     NativeWebSocket.WebSocket websocket;
 
     public GameObject nodePrefab;
-    public LineRenderer edgePrefab;
+    public LineRenderer edgePrefab; // 元のコード通り LineRenderer 型
     public Transform graphContainer;
 
     private Dictionary<string, GameObject> spawnedNodes = new Dictionary<string, GameObject>();
-    // ⭐ 修正: List<GameObject> に統一 ⭐
-    private List<GameObject> spawnedEdges = new List<GameObject>();
+    private List<GameObject> spawnedEdges = new List<GameObject>(); // 元のコード通り List<GameObject>
+    public GameObject node3DInfoTextPrefab; // ⭐ ADDED: Reference to the 3D Text Prefab ⭐
+    private NodeInfo lastClickedNodeInfo;   // Holds info of the last clicked node for toggling 3D text
 
     async void Start()
     {
@@ -68,16 +69,13 @@ public class GraphManager : MonoBehaviour
         }
         if (nodePrefab == null) Debug.LogError("Node Prefab is not assigned!");
         if (edgePrefab == null) Debug.LogError("Edge Prefab is not assigned!");
-
+        if (node3DInfoTextPrefab == null) Debug.LogError("Node 3D Info Text Prefab is not assigned!"); // For 3D text display
 
         websocket = new NativeWebSocket.WebSocket("ws://localhost:8765");
 
         websocket.OnOpen += () => Debug.Log("✅ WebSocket Connection open!");
         websocket.OnError += (e) => Debug.LogError("❌ WebSocket Error: " + e);
-        // ⭐ 修正: OnClose イベントハンドラの引数とログ出力 ⭐
-        websocket.OnClose += (e) => Debug.Log("🔌 WebSocket Connection closed! Code: " + e.ToString()); // e.ToString() を使用
-        // 備考: NativeWebSocketの古いバージョンでは OnClose は引数なし (Action) の場合もあります。
-        // その場合は websocket.OnClose += () => Debug.Log("..."); と修正してください。
+        websocket.OnClose += (e) => Debug.Log("🔌 WebSocket Connection closed! Code: " + e.ToString());
 
         websocket.OnMessage += (bytes) =>
         {
@@ -101,6 +99,73 @@ public class GraphManager : MonoBehaviour
     void Update()
     {
         if (websocket != null) { websocket.DispatchMessageQueue(); }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Debug.Log($"Raycast hit: {hit.collider.name} (Layer: {LayerMask.LayerToName(hit.collider.gameObject.layer)}) at position: {hit.point}");
+                
+                ClickSoundPlayer soundPlayer = hit.collider.GetComponent<ClickSoundPlayer>();
+                NodeInfo clickedNodeInfo = hit.collider.GetComponent<NodeInfo>();
+
+                // Hide info for previously clicked node if it's different or if clicking elsewhere
+                if (lastClickedNodeInfo != null && lastClickedNodeInfo != clickedNodeInfo)
+                {
+                    lastClickedNodeInfo.HideInfoDisplay();
+                }
+
+                
+
+                if (soundPlayer != null)
+                {
+                    soundPlayer.PlaySound();
+                    Debug.Log("Played sound for: " + hit.collider.name);
+
+                    //NodeInfo nodeInfo = hit.collider.GetComponent<NodeInfo>();
+                    //if (nodeInfo != null)
+                    //{
+                    //    Debug.Log($"Node Clicked: ID={nodeInfo.nodeId}, Key={nodeInfo.nodeKey}, Level={nodeInfo.nodeLevel}");
+                    //}
+
+                    if (clickedNodeInfo != null) // If a Node was clicked
+                    {
+                        Debug.Log($"ノード情報を表示！");
+                        string infoContent =
+                            $"Node Information\n" +
+                            $"ID: {clickedNodeInfo.nodeId}\n" +
+                            $"Key: {clickedNodeInfo.nodeKey}\n" +
+                            $"Level: {clickedNodeInfo.nodeLevel}\n" +
+                            $"MV Value: {clickedNodeInfo.nodeMvValue}";
+
+                        clickedNodeInfo.ToggleInfoDisplay(infoContent); // Show/Hide 3D text
+                        lastClickedNodeInfo = clickedNodeInfo; // Record this node as last clicked
+                    }
+                    else // If an Edge was clicked (has sound but not NodeInfo)
+                    {
+                        Debug.Log($"Edge Clicked: {hit.collider.name}");
+                        lastClickedNodeInfo = null; // Clear node info display if clicking an edge
+                    }
+
+
+                }
+                else
+                {
+                    Debug.Log("Clicked on: " + hit.collider.name + ", but no ClickSoundPlayer found.");
+                    if (lastClickedNodeInfo != null) lastClickedNodeInfo.HideInfoDisplay();
+                    lastClickedNodeInfo = null;
+                }
+            }
+            else
+            {
+                Debug.Log("Clicked on empty space (Raycast hit nothing).");
+                if (lastClickedNodeInfo != null) lastClickedNodeInfo.HideInfoDisplay();
+                lastClickedNodeInfo = null;
+            }
+        }
     }
 
     void UpdateGraphVisuals(GraphData data)
@@ -141,6 +206,9 @@ public class GraphManager : MonoBehaviour
                 if (collider == null) collider = nodeObject.AddComponent<SphereCollider>();
                 collider.radius = 0.5f;
 
+                // ⭐ ADDED: NodeInfo に 3D Text Prefab を渡す ⭐
+                nodeInfo.nodeInfo3DTextPrefab = node3DInfoTextPrefab;
+
                 if (!spawnedNodes.ContainsKey(node.id))
                 {
                     spawnedNodes.Add(node.id, nodeObject);
@@ -158,24 +226,42 @@ public class GraphManager : MonoBehaviour
         {
             foreach (var edge in data.edges)
             {
-                if (spawnedNodes.TryGetValue(edge.source, out GameObject sourceNode) && spawnedNodes.TryGetValue(edge.target, out GameObject targetNode))
+                GameObject sourceNode, targetNode;
+                if (!spawnedNodes.TryGetValue(edge.source, out sourceNode))
                 {
-                    LineRenderer line = Instantiate(edgePrefab, graphContainer);
-                    line.SetPosition(0, sourceNode.transform.position);
-                    line.SetPosition(1, targetNode.transform.position);
+                    Debug.LogWarning($"Missing source node for edge: {edge.source}. Skipping edge creation.");
+                    continue;
+                }
+                if (!spawnedNodes.TryGetValue(edge.target, out targetNode))
+                {
+                    Debug.LogWarning($"Missing target node for edge: {edge.target}. Skipping edge creation.");
+                    continue;
+                }
 
-                    line.startWidth = 0.1f;
-                    line.endWidth = 0.1f;
-                    line.material = new Material(Shader.Find("Sprites/Default"));
-                    line.startColor = Color.gray;
-                    line.endColor = Color.gray;
-                    line.name = $"Edge_{edge.source}_to_{edge.target}";
-                    spawnedEdges.Add(line.gameObject);
-                }
-                else
+                GameObject edgeObject = Instantiate(edgePrefab.gameObject, graphContainer); // ⭐ .gameObject を追加 ⭐
+                LineRenderer line = edgeObject.GetComponent<LineRenderer>();
+
+                if (line == null)
                 {
-                    Debug.LogWarning($"Missing node(s) for edge: {edge.source} -> {edge.target}. One or both nodes not found in spawnedNodes dictionary. Skipping edge creation.");
+                    Debug.LogError($"Edge Prefab '{edgePrefab.name}' is missing a LineRenderer component. Cannot draw edge.");
+                    Destroy(edgeObject);
+                    continue;
                 }
+
+                Vector3 startPos = sourceNode.transform.position;
+                Vector3 endPos = targetNode.transform.position;
+
+                line.positionCount = 2;
+                line.SetPosition(0, startPos);
+                line.SetPosition(1, endPos);
+
+                line.startWidth = 0.1f;
+                line.endWidth = 0.1f;
+                line.material = new Material(Shader.Find("Sprites/Default"));
+                line.startColor = Color.gray;
+                line.endColor = Color.gray;
+                line.name = $"Edge_{edge.source}_to_{edge.target}";
+                spawnedEdges.Add(line.gameObject);
             }
             Debug.Log("Finished generating " + data.edges.Count + " edges.");
         }
@@ -183,6 +269,15 @@ public class GraphManager : MonoBehaviour
 
     void ClearExistingGraph()
     {
+
+        // 1. まず、現在表示中の3Dテキストがあれば非表示にする
+        if (lastClickedNodeInfo != null)
+        {
+            lastClickedNodeInfo.HideInfoDisplay(); // NodeInfoのHideInfoDisplayを呼び出す
+            lastClickedNodeInfo = null; // 参照もクリアする
+        }
+
+        // 2. 既存のノードとエッジを全て削除
         foreach (Transform child in graphContainer)
         {
             Destroy(child.gameObject);
@@ -197,3 +292,4 @@ public class GraphManager : MonoBehaviour
         if (websocket != null) { await websocket.Close(); }
     }
 }
+

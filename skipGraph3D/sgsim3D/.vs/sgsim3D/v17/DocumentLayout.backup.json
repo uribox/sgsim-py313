@@ -3,16 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\GraphManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\GraphManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\AnimateLineRenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\AnimateLineRenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\Billboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Billboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,6 +13,26 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeAnimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\NodeAnimation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\GraphManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\GraphManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\ClickSoundPlayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\ClickSoundPlayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\FreeLookCamera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\FreeLookCamera.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\AnimateLineRenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\AnimateLineRenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,24 +42,61 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "Billboard.cs",
+              "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\Billboard.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Billboard.cs",
+              "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\Billboard.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Billboard.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T05:45:44.654Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ClickSoundPlayer.cs",
+              "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\ClickSoundPlayer.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\ClickSoundPlayer.cs",
+              "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\ClickSoundPlayer.cs",
+              "RelativeToolTip": "Assets\\Scripts\\ClickSoundPlayer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T02:52:32.406Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FreeLookCamera.cs",
+              "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\FreeLookCamera.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\FreeLookCamera.cs",
+              "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\FreeLookCamera.cs",
+              "RelativeToolTip": "Assets\\Scripts\\FreeLookCamera.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAF4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-16T09:14:27.386Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "NodeInfo.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\NodeInfo.cs",
               "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs",
               "RelativeToolTip": "Assets\\Scripts\\NodeInfo.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAABKAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAmwB0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-16T07:23:58.75Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "NodeAnimation.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeAnimation.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\NodeAnimation.cs",
@@ -55,12 +104,11 @@
               "RelativeToolTip": "Assets\\Scripts\\NodeAnimation.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T06:10:10.564Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-01T06:10:10.564Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "AnimateLineRenderer.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\AnimateLineRenderer.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AnimateLineRenderer.cs",
@@ -68,12 +116,11 @@
               "RelativeToolTip": "Assets\\Scripts\\AnimateLineRenderer.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T05:52:00.665Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-01T05:52:00.665Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "UnitMainThreadDispatcher.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\UnitMainThreadDispatcher.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitMainThreadDispatcher.cs",
@@ -81,21 +128,19 @@
               "RelativeToolTip": "Assets\\Scripts\\UnitMainThreadDispatcher.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T04:30:14.054Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-01T04:30:14.054Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "GraphManager.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\GraphManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\GraphManager.cs",
               "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\GraphManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\GraphManager.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAAD0AAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAiwHMAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-01T01:51:18.16Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-01T01:51:18.16Z"
             }
           ]
         }
