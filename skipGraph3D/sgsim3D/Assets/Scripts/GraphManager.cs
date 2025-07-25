@@ -28,6 +28,7 @@ public class EdgeData
 {
     public string source;       // 例: "100@0" (source node ID, key@level 形式)
     public string target;       // 例: "101@0" (target node ID, key@level 形式)
+    public int hop;
 }
 
 [System.Serializable]
@@ -57,8 +58,12 @@ public class GraphManager : MonoBehaviour
 
     private Dictionary<string, GameObject> spawnedNodes = new Dictionary<string, GameObject>();
     private List<GameObject> spawnedEdges = new List<GameObject>(); // 元のコード通り List<GameObject>
+
     public GameObject node3DInfoTextPrefab; // ⭐ ADDED: Reference to the 3D Text Prefab ⭐
     private NodeInfo lastClickedNodeInfo;   // Holds info of the last clicked node for toggling 3D text
+
+    public GameObject edge3DInfoTextPrefab; // このフィールドをInspectorで設定
+    private EdgeInfo lastClickedEdgeInfo; // 最後にクリックされたエッジの情報を保持
 
     async void Start()
     {
@@ -70,6 +75,7 @@ public class GraphManager : MonoBehaviour
         if (nodePrefab == null) Debug.LogError("Node Prefab is not assigned!");
         if (edgePrefab == null) Debug.LogError("Edge Prefab is not assigned!");
         if (node3DInfoTextPrefab == null) Debug.LogError("Node 3D Info Text Prefab is not assigned!"); // For 3D text display
+        if (edge3DInfoTextPrefab == null) Debug.LogError("Edge 3D Info Text Prefab is not assigned!"); // 新しいPrefabのチェックも追加
 
         websocket = new NativeWebSocket.WebSocket("ws://localhost:8765");
 
@@ -111,14 +117,18 @@ public class GraphManager : MonoBehaviour
                 
                 ClickSoundPlayer soundPlayer = hit.collider.GetComponent<ClickSoundPlayer>();
                 NodeInfo clickedNodeInfo = hit.collider.GetComponent<NodeInfo>();
+                EdgeInfo clickedEdgeInfo = hit.collider.GetComponent<EdgeInfo>();
 
                 // Hide info for previously clicked node if it's different or if clicking elsewhere
                 if (lastClickedNodeInfo != null && lastClickedNodeInfo != clickedNodeInfo)
                 {
                     lastClickedNodeInfo.HideInfoDisplay();
                 }
+                if (lastClickedEdgeInfo != null && lastClickedEdgeInfo != clickedEdgeInfo) // ⭐ 追加: エッジテキストも非表示 ⭐
+                {
+                    lastClickedEdgeInfo.HideInfoDisplay();
+                }
 
-                
 
                 if (soundPlayer != null)
                 {
@@ -133,7 +143,7 @@ public class GraphManager : MonoBehaviour
 
                     if (clickedNodeInfo != null) // If a Node was clicked
                     {
-                        Debug.Log($"ノード情報を表示！");
+                        //Debug.Log($"ノード情報を表示！");
                         string infoContent =
                             $"Node Information\n" +
                             $"ID: {clickedNodeInfo.nodeId}\n" +
@@ -143,27 +153,50 @@ public class GraphManager : MonoBehaviour
 
                         clickedNodeInfo.ToggleInfoDisplay(infoContent); // Show/Hide 3D text
                         lastClickedNodeInfo = clickedNodeInfo; // Record this node as last clicked
+                        lastClickedEdgeInfo = null;
+                    }
+                    else if (clickedEdgeInfo != null) // ⭐ 追加: クリックされたのがエッジの場合 ⭐
+                    {
+                        string infoContent =
+                            $"Edge Information\n" +
+                            $"Source: {clickedEdgeInfo.sourceNodeId}\n" +
+                            $"Target: {clickedEdgeInfo.targetNodeId}";
+                            //$"Hop: {clickedEdgeInfo.hop}";
+
+                        clickedEdgeInfo.ToggleInfoDisplay(infoContent); // エッジの3Dテキストを表示/非表示
+                        lastClickedEdgeInfo = clickedEdgeInfo; // 最後にクリックされたエッジを記録
+                        lastClickedNodeInfo = null; // エッジクリック時はノードテキストをクリア
+                        Debug.Log($"Edge Clicked: {hit.collider.name}"); // ログはそのまま
+                        Debug.Log($"Edge Clicked: {clickedEdgeInfo.sourceNodeId}"); // ログはそのまま
+                        Debug.Log($"Edge Clicked: {clickedEdgeInfo.targetNodeId}"); // ログはそのまま
                     }
                     else // If an Edge was clicked (has sound but not NodeInfo)
                     {
-                        Debug.Log($"Edge Clicked: {hit.collider.name}");
-                        lastClickedNodeInfo = null; // Clear node info display if clicking an edge
+                        Debug.Log("Clicked on: " + hit.collider.name + ", but no ClickSoundPlayer found.");
+                        if (lastClickedNodeInfo != null) lastClickedNodeInfo.HideInfoDisplay();
+                        if (lastClickedEdgeInfo != null) lastClickedEdgeInfo.HideInfoDisplay(); // エッジテキストも隠す
+                        lastClickedNodeInfo = null;
+                        lastClickedEdgeInfo = null;
                     }
 
 
                 }
                 else
                 {
-                    Debug.Log("Clicked on: " + hit.collider.name + ", but no ClickSoundPlayer found.");
+                    Debug.Log("Clicked on empty space (Raycast hit nothing).");
                     if (lastClickedNodeInfo != null) lastClickedNodeInfo.HideInfoDisplay();
+                    if (lastClickedEdgeInfo != null) lastClickedEdgeInfo.HideInfoDisplay(); // エッジテキストも隠す
                     lastClickedNodeInfo = null;
+                    lastClickedEdgeInfo = null;
                 }
             }
             else
             {
                 Debug.Log("Clicked on empty space (Raycast hit nothing).");
                 if (lastClickedNodeInfo != null) lastClickedNodeInfo.HideInfoDisplay();
+                if (lastClickedEdgeInfo != null) lastClickedEdgeInfo.HideInfoDisplay();
                 lastClickedNodeInfo = null;
+                lastClickedEdgeInfo = null;
             }
         }
     }
@@ -239,17 +272,26 @@ public class GraphManager : MonoBehaviour
                 }
 
                 GameObject edgeObject = Instantiate(edgePrefab.gameObject, graphContainer); // ⭐ .gameObject を追加 ⭐
-                LineRenderer line = edgeObject.GetComponent<LineRenderer>();
+                edgeObject.name = $"Edge_{edge.source}_to_{edge.target}";
 
+                // ⭐ 問題の箇所: EdgeInfo コンポーネントにデータを設定する部分 ⭐
+                EdgeInfo edgeInfo = edgeObject.GetComponent<EdgeInfo>();
+                if (edgeInfo == null) edgeInfo = edgeObject.AddComponent<EdgeInfo>();
+
+                edgeInfo.sourceNodeId = edge.source; // ⭐ ここで設定しているはず ⭐
+                edgeInfo.targetNodeId = edge.target; // ⭐ ここで設定しているはず ⭐
+                edgeInfo.edgeInfo3DTextPrefab = edge3DInfoTextPrefab;
+
+                Vector3 startPos = sourceNode.transform.position;
+                Vector3 endPos = targetNode.transform.position;
+
+                LineRenderer line = edgeObject.GetComponent<LineRenderer>();
                 if (line == null)
                 {
                     Debug.LogError($"Edge Prefab '{edgePrefab.name}' is missing a LineRenderer component. Cannot draw edge.");
                     Destroy(edgeObject);
                     continue;
                 }
-
-                Vector3 startPos = sourceNode.transform.position;
-                Vector3 endPos = targetNode.transform.position;
 
                 line.positionCount = 2;
                 line.SetPosition(0, startPos);
@@ -262,9 +304,49 @@ public class GraphManager : MonoBehaviour
                 line.endColor = Color.gray;
                 line.name = $"Edge_{edge.source}_to_{edge.target}";
                 spawnedEdges.Add(line.gameObject);
+
+                // ⭐⭐⭐ ADDED: エッジの Collider と LineRenderer の動的調整ロジック ⭐⭐⭐
+
+                // Box Collider を取得または追加
+                BoxCollider edgeCollider = edgeObject.GetComponent<BoxCollider>();
+                if (edgeCollider == null)
+                {
+                    edgeCollider = edgeObject.AddComponent<BoxCollider>();
+                }
+
+                // --- Collider と LineRenderer の位置・回転・サイズ計算 ---
+                // 1. エッジのGameObject自体を始点ノードの位置に移動
+                edgeObject.transform.position = startPos;
+
+                // 2. ラインの方向と長さを計算
+                Vector3 direction = endPos - startPos;
+                float distance = direction.magnitude; // ラインの長さ
+
+                // 3. LineRenderer の点をローカル座標で設定 (GameObjectの原点を基準にする)
+                //    これでラインは edgeObject のローカルZ軸に沿って伸びるようになる
+                //line.positionCount = 2;
+                //line.SetPosition(0, Vector3.zero); // 始点はGameObjectのローカル原点
+                //line.SetPosition(1, new Vector3(0, 0, distance)); // 終点はローカルZ軸方向に長さ分
+
+                // 4. エッジのGameObjectを回転させて、Line RendererとColliderがラインの方向を向くようにする
+                //    Quaternion.LookRotation は Z 軸を direction に向ける回転を作成する
+                edgeObject.transform.rotation = Quaternion.LookRotation(direction);
+
+                // 5. Box Collider のサイズと中心を設定
+                //    size.z はラインの長さ (distance) に合わせる
+                //    size.x, y は Line Renderer の太さより少し太くする
+                edgeCollider.size = new Vector3(line.startWidth * 1.5f, line.startWidth * 1.5f, distance);
+                //    center.z は Box Collider の中心がラインの中間点にくるように (ローカルZ軸上)
+                edgeCollider.center = new Vector3(0, 0, distance / 2f);
+
+                // Collider が Raycast にヒットするように Is Trigger はオフ
+                edgeCollider.isTrigger = false;
+
             }
-            Debug.Log("Finished generating " + data.edges.Count + " edges.");
         }
+
+      
+        Debug.Log("Finished generating " + data.path.Count + " pathes.");
     }
 
     void ClearExistingGraph()
@@ -275,6 +357,11 @@ public class GraphManager : MonoBehaviour
         {
             lastClickedNodeInfo.HideInfoDisplay(); // NodeInfoのHideInfoDisplayを呼び出す
             lastClickedNodeInfo = null; // 参照もクリアする
+        }
+        if (lastClickedEdgeInfo != null)
+        {
+            lastClickedEdgeInfo.HideInfoDisplay();
+            lastClickedEdgeInfo = null;
         }
 
         // 2. 既存のノードとエッジを全て削除

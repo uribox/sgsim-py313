@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2673623525817329735}
   - component: {fileID: 4636867868627166045}
   - component: {fileID: 3488565881058453337}
+  - component: {fileID: -7976414240975807024}
   m_Layer: 0
   m_Name: Edge
   m_TagString: Untagged
@@ -261,3 +262,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soundToPlay: {fileID: 8300000, guid: 6bec88e484b5e724798c1c35da0f2a04, type: 3}
+--- !u!114 &-7976414240975807024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4390197637190005796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f36d33380486ee4f85c21baa8995dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sourceNodeId: 
+  targetNodeId: 
+  hop: 
+  edgeInfo3DTextPrefab: {fileID: 85242783405409953, guid: 38bf99f87c1619144b933087afe92ee6, type: 3}

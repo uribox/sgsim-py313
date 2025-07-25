@@ -86,6 +86,7 @@ except ImportError:
 # --- グローバル変数: 最新のグラフデータを保持 ---
 _latest_graph_data = None
 _latest_graph_data_lock = threading.Lock()
+_graph_data_updated_event = asyncio.Event() # ⭐ ADDED: データ更新を通知するためのイベント ⭐
 
 
 # ⭐ ADDED: ダミーデータ生成関数 ⭐
@@ -376,6 +377,7 @@ def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
 
 # --- WebSocketサーバーハンドラー ---
 async def websocket_handler(websocket, path):
+    global _graph_data_updated_event  # ⭐ ADDED: イベントをグローバルとして参照 ⭐
     print("✅ Unity client connected!")
     try:
         while True:
@@ -386,6 +388,10 @@ async def websocket_handler(websocket, path):
                         data_to_send = _latest_graph_data
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
                         print("--- SENDING TO UNITY (simulation data) ---")
+
+                        # ⭐ MODIFIED: シミュレーションデータ送信後の待機ロジック ⭐
+                        _graph_data_updated_event.clear() # 次の更新を待つためにイベントをクリア
+
                     else:
                         data_to_send = generate_dummy_graph_data_for_unity()
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
@@ -408,7 +414,11 @@ async def websocket_handler(websocket, path):
                         # 送信失敗時のエラーログも残す
                         print(f"🚨 ERROR (websocket_handler): Failed to send via WebSocket: {send_err}")
     
-                await asyncio.sleep(10)
+                # ⭐ MODIFIED: データ送信後の待機ロジック ⭐
+                if _latest_graph_data: # シミュレーションデータが利用可能な場合
+                    await _graph_data_updated_event.wait() # 次のデータ更新まで待機
+                else: # ダミーデータの場合
+                    await asyncio.sleep(5) # 5秒待機
 
             except Exception as e: # ⭐ 外側の try-except は、while ループに入る前に発生するエラー用 ⭐
                 #print(f"WebSocket handler failed to start: {str(e)}")
@@ -422,6 +432,7 @@ async def websocket_handler(websocket, path):
 # --- HTTPサーバーハンドラー ---
 class GraphDataReceiverHandler(BaseHTTPRequestHandler):
     def do_POST(self):
+        global _graph_data_updated_event # ⭐ ADDED: イベントをグローバルとして参照 ⭐
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
 
@@ -431,6 +442,8 @@ class GraphDataReceiverHandler(BaseHTTPRequestHandler):
             with _latest_graph_data_lock:
                 global _latest_graph_data
                 _latest_graph_data = received_data
+                print("Received new graph data from GUI. _latest_graph_data updated.")
+                _graph_data_updated_event.set() # ⭐ ADDED: データが更新されたことを通知 ⭐
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')

@@ -201,3 +201,4 @@ MonoBehaviour:
   edgePrefab: {fileID: 0}
   graphContainer: {fileID: 0}
   node3DInfoTextPrefab: {fileID: 0}
+  edge3DInfoTextPrefab: {fileID: 0}

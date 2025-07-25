@@ -23,10 +23,10 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 1
+  m_AmbientIntensity: 0
   m_AmbientMode: 0
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 81f714daf7144784b8a2f42f1cd30927, type: 2}
+  m_SubtractiveShadowColor: {r: 0.49803925, g: 0.49803925, b: 0.49803925, a: 1}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 860a66ca4259b384f9ec01b687f71c3c, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -155,6 +155,7 @@ MonoBehaviour:
   edgePrefab: {fileID: 8750167506445141217, guid: 59c90b3cdf8ec92458e544459a7495de, type: 3}
   graphContainer: {fileID: 1717162661}
   node3DInfoTextPrefab: {fileID: 8107908127193827825, guid: e1170a6e8d0c07e409470e6c9fe6a1aa, type: 3}
+  edge3DInfoTextPrefab: {fileID: 85242783405409953, guid: 38bf99f87c1619144b933087afe92ee6, type: 3}
 --- !u!4 &530014455
 Transform:
   m_ObjectHideFlags: 0
