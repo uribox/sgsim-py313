@@ -26,7 +26,7 @@ def convert_wsl_path_to_windows_format(wsl_path_obj: Path):
     if path_str.startswith("/mnt/") and len(path_str) >= 6 and path_str[5].isalpha():
         drive_letter = path_str[5].upper()
         rest_of_path = path_str[6:]
-        # ⭐⭐⭐ ここを修正！f-string内のバックスラッシュの問題を回避 ⭐⭐⭐
+        #  ここを修正！f-string内のバックスラッシュの問題を回避 
         # rest_of_path.replace('/', '\\') の部分でエラーが出るため、
         # ここでは .replace('/', os.sep) を使用するか、
         # または f-stringの外で文字列結合を行う
@@ -37,12 +37,10 @@ def convert_wsl_path_to_windows_format(wsl_path_obj: Path):
 # ビルド済みUnityアプリケーションのWindows形式パス (Unityアプリに渡すため)
 BUILT_UNITY_APP_PATH_WIN = convert_wsl_path_to_windows_format(BUILT_UNITY_APP_PATH_LINUX)
 
-
 # --- プロジェクトルートからの相対パス (誰の環境でも同じ) ---
 GUI_SCRIPT = (PROJECT_ROOT / "gui" / "main_gui.py").as_posix()
 GRAPH_SERVER_SCRIPT = (PROJECT_ROOT / "skipGraph3D" / "graph_server.py").as_posix()
 SGSIM_MAIN_SCRIPT = (CURRENT_SCRIPT_DIR / "sg_main.py").as_posix() 
-
 
 # --- Helper for launching processes ---
 def launch_process(command, name="Process"):
@@ -53,7 +51,7 @@ def launch_process(command, name="Process"):
     if command[0] == sys.executable: # Pythonスクリプトの場合 (sg_main.pyなど)
         return subprocess.Popen(
             command, 
-            creationflags=creation_flags, # ⭐ この行が有効になっているか ⭐
+            creationflags=creation_flags, # この行が有効になっているか 
             text=True, 
             encoding='utf-8', 
             errors='replace'
@@ -62,7 +60,7 @@ def launch_process(command, name="Process"):
         return subprocess.Popen(
             command, 
             shell=False, 
-            creationflags=creation_flags # ⭐ この行が有効になっているか ⭐
+            creationflags=creation_flags #  この行が有効になっているか 
         )
 
 def main():
@@ -123,3 +121,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

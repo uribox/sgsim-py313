@@ -9,8 +9,7 @@ import queue
 import sys
 import os
 
-
-# ⭐ ADDED: Block to dynamically add sg.py's directory to sys.path ⭐
+# ADDED: Block to dynamically add sg.py's directory to sys.path 
 # graph_server.py が存在するディレクトリ (skipGraph3D/)
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 # プロジェクトのルートディレクトリ (sgsim-py313) へ移動
@@ -22,8 +21,7 @@ sg_module_path = os.path.join(project_root, "sgsim-py313", "src")
 if sg_module_path not in sys.path:
     sys.path.insert(0, sg_module_path)
 
-
-# ⭐ MODIFIED: sg.py のインポートとダミークラスの改善（最終版） ⭐
+# MODIFIED: sg.py のインポートとダミークラスの改善（最終版） 
 try:
     import sg
     from sg import SGNode, MembershipVector, UnicastBase
@@ -86,11 +84,11 @@ except ImportError:
 # --- グローバル変数: 最新のグラフデータを保持 ---
 _latest_graph_data = None
 _latest_graph_data_lock = threading.Lock()
-_graph_data_updated_event = asyncio.Event() # ⭐ ADDED: データ更新を通知するためのイベント ⭐
+_graph_data_updated_event = asyncio.Event() #  ADDED: データ更新を通知するためのイベント 
 
 
-# ⭐ ADDED: ダミーデータ生成関数 ⭐
-# ⭐ MODIFIED: ダミーデータ生成関数をよりランダムに、レベルによってノード数を変化させる ⭐
+#  ADDED: ダミーデータ生成関数 
+#  MODIFIED: ダミーデータ生成関数をよりランダムに、レベルによってノード数を変化させる 
 def generate_dummy_graph_data_for_unity() -> dict:
     """
     Unityに送信するための構造化されたダミーグラフデータを生成します。
@@ -278,7 +276,7 @@ def calculate_cylindrical_positions(nodes_dict_list: list, max_level: int) -> di
 
 # skipGraph3D/graph_server.py の convert_sg_data_to_unity_json 関数部分
 # ... (関数の冒頭部分から node_positions_3d の計算まで) ...
-# ⭐⭐ MODIFIED: convert_sg_data_to_unity_json 関数全体 ⭐⭐
+# MODIFIED: convert_sg_data_to_unity_json 関数全体 
 def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
     sg_nodes_dicts = sg_raw_data.get('nodes', [])
     sg_edges_dicts = sg_raw_data.get('edges', [])
@@ -296,7 +294,7 @@ def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
 
     node_positions_3d = calculate_cylindrical_positions(sg_nodes_dicts, max_level_from_nodes)
 
-    # ⭐ ヘルパー関数: ノードキーからレベルを検索する ⭐
+    # ヘルパー関数: ノードキーからレベルを検索する 
     # sg_nodes_dicts (生の辞書リスト) から key に対応する level を取得
     # これを convert_sg_data_to_unity_json の中で定義
     node_key_to_level_map = {n['key']: n.get('level', 0) for n in sg_nodes_dicts}
@@ -377,7 +375,7 @@ def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
 
 # --- WebSocketサーバーハンドラー ---
 async def websocket_handler(websocket, path):
-    global _graph_data_updated_event  # ⭐ ADDED: イベントをグローバルとして参照 ⭐
+    global _graph_data_updated_event  # ADDED: イベントをグローバルとして参照 
     print("✅ Unity client connected!")
     try:
         while True:
@@ -389,7 +387,7 @@ async def websocket_handler(websocket, path):
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
                         print("--- SENDING TO UNITY (simulation data) ---")
 
-                        # ⭐ MODIFIED: シミュレーションデータ送信後の待機ロジック ⭐
+                        # MODIFIED: シミュレーションデータ送信後の待機ロジック 
                         _graph_data_updated_event.clear() # 次の更新を待つためにイベントをクリア
 
                     else:
@@ -397,16 +395,16 @@ async def websocket_handler(websocket, path):
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
                         print("--- SENDING TO UNITY (dummy data) ---")
                         
-                    # ⭐⭐⭐ ADDED: Print converted data before sending to Unity ⭐⭐⭐
+                    # ADDED: Print converted data before sending to Unity 
                     #print("--- SENDING TO UNITY (converted data) ---")
                     # Print only first 1000 characters to prevent console overflow
                     #print(json.dumps(converted_data, indent=2)[:1000] + "...")
                     #print(json.dumps(converted_data, indent=2)) # データ全体を表示
                     #print("-----------------------------------------")
-                    # ⭐⭐⭐ END ADDED ⭐⭐⭐
+                    # END ADDED 
     
                     try:
-                        # ⭐ 実際の WebSocket 送信処理 ⭐
+                        # 実際の WebSocket 送信処理 
                         await websocket.send(json.dumps(converted_data)) 
                         # 送信成功ログは残す
                         print("DEBUG(websocket_handler): Data sent via WebSocket.") 
@@ -414,13 +412,13 @@ async def websocket_handler(websocket, path):
                         # 送信失敗時のエラーログも残す
                         print(f"🚨 ERROR (websocket_handler): Failed to send via WebSocket: {send_err}")
     
-                # ⭐ MODIFIED: データ送信後の待機ロジック ⭐
+                # MODIFIED: データ送信後の待機ロジック 
                 if _latest_graph_data: # シミュレーションデータが利用可能な場合
                     await _graph_data_updated_event.wait() # 次のデータ更新まで待機
                 else: # ダミーデータの場合
                     await asyncio.sleep(5) # 5秒待機
 
-            except Exception as e: # ⭐ 外側の try-except は、while ループに入る前に発生するエラー用 ⭐
+            except Exception as e: # 外側の try-except は、while ループに入る前に発生するエラー用 
                 #print(f"WebSocket handler failed to start: {str(e)}")
                 pass
     except websockets.exceptions.ConnectionClosed:
@@ -432,7 +430,7 @@ async def websocket_handler(websocket, path):
 # --- HTTPサーバーハンドラー ---
 class GraphDataReceiverHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global _graph_data_updated_event # ⭐ ADDED: イベントをグローバルとして参照 ⭐
+        global _graph_data_updated_event # ADDED: イベントをグローバルとして参照 
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
 
@@ -443,19 +441,19 @@ class GraphDataReceiverHandler(BaseHTTPRequestHandler):
                 global _latest_graph_data
                 _latest_graph_data = received_data
                 print("Received new graph data from GUI. _latest_graph_data updated.")
-                _graph_data_updated_event.set() # ⭐ ADDED: データが更新されたことを通知 ⭐
+                _graph_data_updated_event.set() # ADDED: データが更新されたことを通知 
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"status": "success", "message": "Graph data received"}).encode('utf-8'))
 
-            # ⭐⭐ ADDED: Print received raw data from sg_main.py ⭐⭐
+            #  ADDED: Print received raw data from sg_main.py 
             print("📈 Received new graph data via HTTP POST.")
             print("--- RECEIVED RAW DATA from sg_main.py ---")
             print(json.dumps(received_data, indent=2)) # Print full received data
             print("------------------------------------------")
-            # ⭐⭐ END ADDED ⭐⭐
+            #  END ADDED 
 
         except json.JSONDecodeError:
             self.send_response(400)
@@ -492,98 +490,4 @@ if __name__ == "__main__":
         print("Server terminated by user.")
     except Exception as e:
         print(f"Server exited with error: {e}")
-
-
-# import asyncio
-# import websockets
-# import json
-# import random
-# import math
-
-# def create_cylindrical_graph_data():
-#     """
-#     ノードを円筒・階層型に配置し、一本の連続した経路を持つデータを生成する関数。
-#     """
-#     nodes = []
-    
-#     # --- レイアウト設定 ---
-#     num_levels = 8
-#     nodes_per_level = 20
-#     level_height = 3.0
-#     radius = 15.0
-#     # ---------------------
-
-#     for level in range(num_levels):
-#         for i in range(nodes_per_level):
-#             angle = (i / float(nodes_per_level)) * 2 * math.pi
-#             x = radius * math.cos(angle)
-#             z = radius * math.sin(angle)
-#             y = level * level_height
-#             nodes.append({
-#                 "id": f"node_{level}_{i}",
-#                 "position": {"x": x, "y": y, "z": z}
-#             })
-
-#     # === 経路生成ロジックの変更箇所 START ===
-
-#     edges = []
-#     path_length = 20  # 経路の長さを設定
-
-#     # 1. 経路の最初のノードをランダムに選ぶ
-#     start_level = random.randint(0, num_levels - 1)
-#     start_node_index = random.randint(0, nodes_per_level - 1)
-#     previous_target_id = f"node_{start_level}_{start_node_index}"
-
-#     # 2. 指定した長さの連続した経路を生成
-#     for _ in range(path_length):
-#         # 現在の始点は、前の終点
-#         source_id = previous_target_id
-        
-#         # 次の終点をランダムに選択
-#         next_target_level = random.randint(0, num_levels - 1)
-#         next_target_node_index = random.randint(0, nodes_per_level - 1)
-#         next_target_id = f"node_{next_target_level}_{next_target_node_index}"
-
-#         # 始点と終点が同じにならないようにする
-#         while source_id == next_target_id:
-#             next_target_level = random.randint(0, num_levels - 1)
-#             next_target_node_index = random.randint(0, nodes_per_level - 1)
-#             next_target_id = f"node_{next_target_level}_{next_target_node_index}"
-
-#         # 経路（edge）を作成してリストに追加
-#         edges.append({
-#             "source": source_id,
-#             "target": next_target_id
-#         })
-        
-#         # 次のループのため、今回の終点を記憶しておく
-#         previous_target_id = next_target_id
-
-#     # === 経路生成ロジックの変更箇所 END ===
-        
-#     return {"nodes": nodes, "edges": edges}
-
-
-# # Unityからの接続を処理するメイン部分
-# async def handler(websocket, path):
-#     print("✅ Unity client connected!")
-#     try:
-#         while True:
-#             graph_data = create_cylindrical_graph_data()
-#             await websocket.send(json.dumps(graph_data))
-#             await asyncio.sleep(3)  # 5秒ごとにデータを更新
-#     except websockets.exceptions.ConnectionClosed:
-#         print("🔌 Unity client disconnected.")
-
-
-# # サーバーを起動
-# async def main():
-#     print("🚀 Python WebSocket server started at ws://localhost:8765")
-#     async with websockets.serve(handler, "localhost", 8765):
-#         await asyncio.Future()
-
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
-
 

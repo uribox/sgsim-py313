@@ -33,6 +33,7 @@ class SimulationWorker(QObject):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                encoding='utf-8',  # ★ 明示的にUTF-8指定
                 bufsize=1,
                 universal_newlines=True,
                 creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
@@ -99,6 +100,8 @@ class SGSimGUI(QWidget):
         super().__init__()
         self.simulation_thread = None
         self.simulation_worker = None
+        self.realNode_simulation_thread = None
+        self.realNode_simulation_worker = None
         self.batch_thread = None
         self.batch_worker = None
         self.init_ui()
@@ -175,11 +178,18 @@ class SGSimGUI(QWidget):
         self.start_button.setIcon(start_icon)
 
         # --- Batchボタン追加 ---
-        self.batch_button = QPushButton("Run All (Batch)")
-        batch_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_CommandLink)
-        self.batch_button.setIcon(batch_icon)
-        self.batch_button.setToolTip("run_all.pyで全ケース一括実行")
-        self.batch_button.clicked.connect(self.run_batch)
+        # self.batch_button = QPushButton("Run All (Batch)")
+        # batch_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_CommandLink)
+        # self.batch_button.setIcon(batch_icon)
+        # self.batch_button.setToolTip("run_all.pyで全ケース一括実行")
+        # self.batch_button.clicked.connect(self.run_batch)
+
+        # --- Real Node Simulation ボタンを追加 ---
+        self.realnode_button = QPushButton("Start Real Node Simulation")
+        realnode_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_ArrowRight)
+        self.realnode_button.setIcon(realnode_icon)
+        self.realnode_button.setToolTip("visualize_skipgraph.py を起動")
+        self.realnode_button.clicked.connect(self.start_realNode_simulation)
 
         self.stop_button = QPushButton("Stop Simulation")
         stop_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
@@ -188,7 +198,8 @@ class SGSimGUI(QWidget):
 
         self.control_layout.addStretch()
         self.control_layout.addWidget(self.start_button)
-        self.control_layout.addWidget(self.batch_button)  # 追加
+        # self.control_layout.addWidget(self.batch_button)  # 追加
+        self.control_layout.addWidget(self.realnode_button)  # ← 新しく追加
         self.control_layout.addWidget(self.stop_button)
         self.control_layout.addStretch()
         self.start_button.clicked.connect(self.start_simulation)
@@ -221,8 +232,9 @@ class SGSimGUI(QWidget):
         self.results_text.clear()
         self.results_text.append("Starting simulation...")
         self.start_button.setEnabled(False)
+        self.realnode_button.setEnabled(False)
         self.stop_button.setEnabled(True)
-        self.batch_button.setEnabled(False)
+        # self.batch_button.setEnabled(False)
 
         args_list = []
         if self.fast_join_checkbox.isChecked(): args_list.append("--fast-join")
@@ -257,6 +269,33 @@ class SGSimGUI(QWidget):
         self.simulation_thread.start()
 
     @Slot()
+    def start_realNode_simulation(self):
+        self.results_text.clear()
+        self.results_text.append("=== Starting Real Node Simulation (visualize_skipgraph.py) ===\n")
+        self.start_button.setEnabled(False)
+        self.stop_button.setEnabled(True)
+        self.realnode_button.setEnabled(False)
+    
+        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "sgsim-py313", "src", "visualize_skipgraph.py"))
+        command = [sys.executable, script_path]
+        self.results_text.append(f"Execution command: {' '.join(command)}\n")
+    
+        self.realNode_simulation_thread = QThread()
+        self.realNode_simulation_worker = SimulationWorker(command)
+        self.realNode_simulation_worker.moveToThread(self.realNode_simulation_thread)
+    
+        self.realNode_simulation_worker.output_received.connect(self.append_output)
+        self.realNode_simulation_worker.error_received.connect(self.append_error)
+        self.realNode_simulation_worker.finished.connect(self.on_realnode_finished)
+        self.realNode_simulation_thread.started.connect(self.realNode_simulation_worker.run)
+        self.realNode_simulation_worker.finished.connect(self.realNode_simulation_thread.quit)
+        self.realNode_simulation_worker.finished.connect(self.realNode_simulation_worker.deleteLater)
+        self.realNode_simulation_thread.finished.connect(self.realNode_simulation_thread.deleteLater)
+        self.realNode_simulation_thread.finished.connect(self.on_realnode_thread_finished)
+        self.realNode_simulation_thread.start()
+    
+    
+    @Slot()
     def run_batch(self):
         self.results_text.clear()
         self.results_text.append("=== Running run_all.py ===\n")
@@ -284,23 +323,45 @@ class SGSimGUI(QWidget):
 
     @Slot()
     def stop_simulation(self):
+        terminated = False
+    
+        # 通常の simulation_worker 停止処理
         if (self.simulation_worker and
             hasattr(self.simulation_worker, 'process') and
             self.simulation_worker.process and
             self.simulation_worker.process.poll() is None):
             self.results_text.append("\n--- Sending termination signal to simulation ---\n")
             self.simulation_worker.process.terminate()
-            self.stop_button.setEnabled(False)
-        else:
-            self.stop_button.setEnabled(False)
-            if not (self.simulation_thread and self.simulation_thread.isRunning()):
+            terminated = True
+    
+        # RealNode simulation_worker 停止処理を追加
+        if (self.realNode_simulation_worker and
+            hasattr(self.realNode_simulation_worker, 'process') and
+            self.realNode_simulation_worker.process and
+            self.realNode_simulation_worker.process.poll() is None):
+            self.results_text.append("\n--- Sending termination signal to Real Node Simulation ---\n")
+            self.realNode_simulation_worker.process.terminate()
+            terminated = True
+    
+        self.stop_button.setEnabled(False)
+    
+        # ボタン状態の復帰
+        if not terminated:
+            if not (self.simulation_thread and self.simulation_thread.isRunning()) and \
+               not (self.realNode_simulation_thread and self.realNode_simulation_thread.isRunning()):
                 self.start_button.setEnabled(True)
-                self.batch_button.setEnabled(True)
+                self.realnode_button.setEnabled(True)
+                # self.batch_button.setEnabled(True)  # 必要なら
+    
+    
 
     def closeEvent(self, event):
         if self.simulation_thread and self.simulation_thread.isRunning():
             self.stop_simulation()
             self.simulation_thread.wait(1000)
+        if self.realNode_simulation_thread and self.realNode_simulation_thread.isRunning():
+            self.realNode_simulation_worker.stop()
+            self.realNode_simulation_thread.wait(1000)
         if self.batch_thread and self.batch_thread.isRunning():
             # 強制終了はないけど、thread終了を少し待つ
             self.batch_thread.wait(1000)
@@ -327,10 +388,25 @@ class SGSimGUI(QWidget):
     def on_thread_finished(self):
         self.results_text.append("Simulation thread has been terminated.\n")
         self.start_button.setEnabled(True)
+        self.realnode_button.setEnabled(True)
         self.stop_button.setEnabled(False)
-        self.batch_button.setEnabled(True)
+        # self.batch_button.setEnabled(True)
         self.simulation_thread = None
         self.simulation_worker = None
+
+    @Slot(int)
+    def on_realnode_finished(self, exit_code):
+        self.results_text.append(f"\nvisualize_skipgraph.py finished with exit code: {exit_code}\n")
+    
+    @Slot()
+    def on_realnode_thread_finished(self):
+        self.results_text.append("Real Node simulation thread terminated.\n")
+        self.start_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
+        self.realnode_button.setEnabled(True)
+        self.realNode_simulation_thread = None
+        self.realNode_simulation_worker = None
+
 
     @Slot(int)
     def on_batch_finished(self, exit_code):
@@ -353,3 +429,4 @@ if __name__ == "__main__":
     window = SGSimGUI()
     window.show()
     sys.exit(app.exec())
+
