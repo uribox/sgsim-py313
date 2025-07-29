@@ -7,12 +7,16 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\GraphManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\NodeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\UnitMainThreadDispatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\NodeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\EdgeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\EdgeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\ClickSoundPlayer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -21,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\Billboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Billboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\EdgeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\EdgeInfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\EdgeAnimetion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -66,7 +66,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "EdgeInfo.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\EdgeInfo.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\EdgeInfo.cs",
@@ -78,7 +78,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Billboard.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\Billboard.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Billboard.cs",
@@ -90,7 +90,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ClickSoundPlayer.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\ClickSoundPlayer.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ClickSoundPlayer.cs",
@@ -138,7 +138,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "UnitMainThreadDispatcher.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\UnitMainThreadDispatcher.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitMainThreadDispatcher.cs",
@@ -156,22 +156,23 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\GraphManager.cs",
               "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\GraphManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\GraphManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJ8AAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-01T01:51:18.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "NodeInfo.cs",
               "DocumentMoniker": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\NodeInfo.cs",
               "ToolTip": "C:\\Users\\takuya\\sgsim-py313\\skipGraph3D\\sgsim3D\\Assets\\Scripts\\NodeInfo.cs",
               "RelativeToolTip": "Assets\\Scripts\\NodeInfo.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAAADEAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T07:23:58.75Z"
+              "WhenOpened": "2025-07-16T07:23:58.75Z",
+              "EditorCaption": ""
             }
           ]
         }
