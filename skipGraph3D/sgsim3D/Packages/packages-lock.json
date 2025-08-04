@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.endel.nativewebsocket": {
-      "version": "file:C:/Users/takuya/Downloads/NativeWebSocket-master/NativeWebSocket-master/NativeWebSocket/Assets",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.unity.collab-proxy": {
       "version": "2.8.2",
       "depth": 0,

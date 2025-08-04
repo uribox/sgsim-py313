@@ -155,15 +155,15 @@ def send_graph_to_server(nodes_json, route):
                 "id": node_id,
                 "position": {"x": 0, "y": 0, "z": 0},  # 必要に応じて補完
                 "level": lvl,
-                "mv_value": int(mv_value),  # 文字列を整数に変換
-                #"mv_value": 0  #エラーのため、デバック用にすべて０
+                #"mv_value": mv_value
+                "mv_value": 0  #エラーのため、デバック用にすべて０
             })
 
             # デバッグ用にノード情報を表示--------------------------------------------------------------------
             print(f'key:{key}')
             print(f'id:{node_id}')
             print(f'level:{lvl}')
-            print(f'mv_value:{int(mv_value)}')
+            print(f'mv_value:{mv_value}')
             print('---------------------------------------------------------------')
             #-----------------------------------------------------------------------------------------------
 
@@ -208,7 +208,6 @@ def send_graph_to_server(nodes_json, route):
         print(f"🚨 ERROR: Connection to graph server timed out. Error: {e}")
     except requests.exceptions.RequestException as e:
         print(f"🚨 ERROR: Failed to send 3D data: {e}")
-
 
 # ---------- main ----------
 if __name__ == "__main__":

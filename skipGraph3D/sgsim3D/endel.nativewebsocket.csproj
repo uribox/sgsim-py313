@@ -59,14 +59,10 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.62f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="C:\Users\takuya\Downloads\NativeWebSocket-master\NativeWebSocket-master\NativeWebSocket\Assets\WebSocket\WebSocket.cs">
-      <Link>WebSocket\WebSocket.cs</Link>
-    </Compile>
+    <Compile Include="Assets\WebSocket\WebSocket.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="C:\Users\takuya\Downloads\NativeWebSocket-master\NativeWebSocket-master\NativeWebSocket\Assets\WebSocket\endel.nativewebsocket.asmdef">
-      <Link>WebSocket\endel.nativewebsocket.asmdef</Link>
-    </None>
+    <None Include="Assets\WebSocket\endel.nativewebsocket.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
