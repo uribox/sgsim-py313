@@ -324,8 +324,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
+  near clip plane: 0.1
+  far clip plane: 1000000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -388,12 +388,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e28fc6863566394c8e3e0c879b8bcf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 100
-  zoomSpeed: 50
+  panSpeed: 300
+  zoomSpeed: 300
   orbitSpeed: 300
-  minZoomDistance: 1
-  maxZoomDistance: 100
+  minZoomDistance: 0.1
+  maxZoomDistance: 1000000
   orbitTargetOffset: {x: 0, y: 0, z: 0}
+  autoRotateSpeed: 2
+  enableAutoRotate: 1
+  fixedRotationCenter: {x: 0, y: 0, z: 0}
 --- !u!1 &1233524023
 GameObject:
   m_ObjectHideFlags: 0
