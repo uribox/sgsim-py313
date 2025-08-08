@@ -9,7 +9,7 @@ import queue
 import sys
 import os
 
-# ADDED: Block to dynamically add sg.py's directory to sys.path 
+# Block to dynamically add sg.py's directory to sys.path 
 # graph_server.py が存在するディレクトリ (skipGraph3D/)
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
 # プロジェクトのルートディレクトリ (sgsim-py313) へ移動
@@ -21,7 +21,7 @@ sg_module_path = os.path.join(project_root, "sgsim-py313", "src")
 if sg_module_path not in sys.path:
     sys.path.insert(0, sg_module_path)
 
-# MODIFIED: sg.py のインポートとダミークラスの改善（最終版） 
+# sg.py のインポートとダミークラスの改善
 try:
     import sg
     from sg import SGNode, MembershipVector, UnicastBase
@@ -46,7 +46,7 @@ try:
 except ImportError:
     print("Error: Could not import 'sg' module in graph_server.py. Please ensure sg.py is accessible.")
     print("Using dummy SGNode, MembershipVector, UnicastBase, sg.ALPHA.")
-    # --- Start of Dummy Class Definitions for Fallback (CORRECTED) ---
+    # --- Start of Dummy Class Definitions for Fallback ---
     class MembershipVector:
         def __init__(self, value=0):
             try:
@@ -65,8 +65,8 @@ except ImportError:
         def __init__(self, key, mv=None):
             self.key = key
             self.mv = mv if mv is not None else MembershipVector(key)
-            self.level = 0 # Dummy level (このダミーは sg_main.py からの id_str を持たない)
-            self.id_str = str(key) # ダミーノードにも id_str を持たせる
+            self.level = 0 
+            self.id_str = str(key) 
         def routing_table_height(self): return 0
         def __repr__(self): return f"SGNode({self.key})"
 
@@ -87,8 +87,7 @@ _latest_graph_data_lock = threading.Lock()
 _graph_data_updated_event = asyncio.Event() #  ADDED: データ更新を通知するためのイベント 
 
 
-#  ADDED: ダミーデータ生成関数 
-#  MODIFIED: ダミーデータ生成関数をよりランダムに、レベルによってノード数を変化させる 
+#  ダミーデータ生成関数 
 def generate_dummy_graph_data_for_unity() -> dict:
     """
     Unityに送信するための構造化されたダミーグラフデータを生成します。
@@ -130,14 +129,15 @@ def generate_dummy_graph_data_for_unity() -> dict:
             z = radius * math.sin(angle) + z_offset
             y = level * level_height + random.uniform(-0.5, 0.5)
 
-            mv_dummy_value = random.randint(0, 10000)
+            #mv_dummy_value = random.randint(0, 10000)
 
             nodes.append({
                 "key": node_key,
                 "id": f"node_{node_key}@{level}",
                 "position": {"x": x, "y": y, "z": z},
                 "level": level,
-                "mv_value": mv_dummy_value
+                #"mv_value": mv_dummy_value,
+                "mv_value": 0,
             })
             total_dummy_nodes_generated += 1
 
@@ -172,18 +172,6 @@ def generate_dummy_graph_data_for_unity() -> dict:
 
 
 def calculate_cylindrical_positions(nodes_dict_list: list, max_level: int) -> dict[str, dict]:
-    """
-    Skip Graphのノードの辞書リストとレベルに基づいて円筒座標を計算します。
-    ノードの 'level' 属性を基にY座標を決定し、円周上に配置します。
-    最もノード数の多いレベルを基準に円筒の半径と円周上のスロット数を動的に調整し、
-    ノード間の間隔に十分な余裕を持たせ、同じレベルのノード間隔を均等にします。
-
-    :param nodes_dict_list: sg_main.py からの SGNode の情報を含む dict のリスト。
-                            各dictには 'key', 'level' (推奨), 'mv_value' (推奨) が必要。
-                            'id' (key@level形式) も含まれる想定。
-    :param max_level: 描画する最大レベル（ノードデータから検出された最大値）。
-    :return: 各ノードID (str) に対応する {x, y, z} 座標の辞書。
-    """
     pos: dict[str, dict] = {}
 
     sg_node_objects = []
@@ -274,9 +262,6 @@ def calculate_cylindrical_positions(nodes_dict_list: list, max_level: int) -> di
     return pos
 
 
-# skipGraph3D/graph_server.py の convert_sg_data_to_unity_json 関数部分
-# ... (関数の冒頭部分から node_positions_3d の計算まで) ...
-# MODIFIED: convert_sg_data_to_unity_json 関数全体 
 def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
     sg_nodes_dicts = sg_raw_data.get('nodes', [])
     sg_edges_dicts = sg_raw_data.get('edges', [])
@@ -294,9 +279,8 @@ def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
 
     node_positions_3d = calculate_cylindrical_positions(sg_nodes_dicts, max_level_from_nodes)
 
-    # ヘルパー関数: ノードキーからレベルを検索する 
+    # ヘルパー関数: ノードキーからレベルを検索する
     # sg_nodes_dicts (生の辞書リスト) から key に対応する level を取得
-    # これを convert_sg_data_to_unity_json の中で定義
     node_key_to_level_map = {n['key']: n.get('level', 0) for n in sg_nodes_dicts}
 
     unity_nodes = []
@@ -375,7 +359,7 @@ def convert_sg_data_to_unity_json(sg_raw_data: dict) -> dict:
 
 # --- WebSocketサーバーハンドラー ---
 async def websocket_handler(websocket, path):
-    global _graph_data_updated_event  # ADDED: イベントをグローバルとして参照 
+    global _graph_data_updated_event  
     print("✅ Unity client connected!")
     try:
         while True:
@@ -386,39 +370,34 @@ async def websocket_handler(websocket, path):
                         data_to_send = _latest_graph_data
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
                         print("--- SENDING TO UNITY (simulation data) ---")
-
-                        # MODIFIED: シミュレーションデータ送信後の待機ロジック 
-                        _graph_data_updated_event.clear() # 次の更新を待つためにイベントをクリア
+                        _graph_data_updated_event.clear() 
 
                     else:
                         data_to_send = generate_dummy_graph_data_for_unity()
                         converted_data = convert_sg_data_to_unity_json(data_to_send)
                         print("--- SENDING TO UNITY (dummy data) ---")
                         
-                    # ADDED: Print converted data before sending to Unity 
+                    # Print converted data before sending to Unity 
                     #print("--- SENDING TO UNITY (converted data) ---")
                     # Print only first 1000 characters to prevent console overflow
                     #print(json.dumps(converted_data, indent=2)[:1000] + "...")
                     #print(json.dumps(converted_data, indent=2)) # データ全体を表示
                     #print("-----------------------------------------")
-                    # END ADDED 
     
                     try:
                         # 実際の WebSocket 送信処理 
                         await websocket.send(json.dumps(converted_data)) 
-                        # 送信成功ログは残す
                         print("DEBUG(websocket_handler): Data sent via WebSocket.") 
                     except Exception as send_err:
-                        # 送信失敗時のエラーログも残す
                         print(f"🚨 ERROR (websocket_handler): Failed to send via WebSocket: {send_err}")
     
-                # MODIFIED: データ送信後の待機ロジック 
+                # データ送信後の待機ロジック 
                 if _latest_graph_data: # シミュレーションデータが利用可能な場合
-                    await _graph_data_updated_event.wait() # 次のデータ更新まで待機
+                    await _graph_data_updated_event.wait() 
                 else: # ダミーデータの場合
                     await asyncio.sleep(5) # 5秒待機
 
-            except Exception as e: # 外側の try-except は、while ループに入る前に発生するエラー用 
+            except Exception as e: 
                 #print(f"WebSocket handler failed to start: {str(e)}")
                 pass
     except websockets.exceptions.ConnectionClosed:
@@ -430,7 +409,7 @@ async def websocket_handler(websocket, path):
 # --- HTTPサーバーハンドラー ---
 class GraphDataReceiverHandler(BaseHTTPRequestHandler):
     def do_POST(self):
-        global _graph_data_updated_event # ADDED: イベントをグローバルとして参照 
+        global _graph_data_updated_event 
         content_length = int(self.headers['Content-Length'])
         post_data = self.rfile.read(content_length)
 
@@ -441,19 +420,18 @@ class GraphDataReceiverHandler(BaseHTTPRequestHandler):
                 global _latest_graph_data
                 _latest_graph_data = received_data
                 print("Received new graph data from GUI. _latest_graph_data updated.")
-                _graph_data_updated_event.set() # ADDED: データが更新されたことを通知 
+                _graph_data_updated_event.set() 
 
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
             self.wfile.write(json.dumps({"status": "success", "message": "Graph data received"}).encode('utf-8'))
 
-            #  ADDED: Print received raw data from sg_main.py 
+            # Print received raw data from sg_main.py 
             print("📈 Received new graph data via HTTP POST.")
             print("--- RECEIVED RAW DATA from sg_main.py ---")
-            print(json.dumps(received_data, indent=2)) # Print full received data
+            print(json.dumps(received_data, indent=2)) 
             print("------------------------------------------")
-            #  END ADDED 
 
         except json.JSONDecodeError:
             self.send_response(400)

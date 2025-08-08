@@ -12,7 +12,7 @@ from sg import SGNode, MembershipVector, UnicastBase
 import random
 
 # ADDED: graph_server.py の URL 定数 (sg_draw.py の冒頭に追加) 
-GRAPH_SERVER_HTTP_PORT = 8001 
+GRAPH_SERVER_HTTP_PORT = 8001
 GRAPH_SERVER_URL = f"http://localhost:{GRAPH_SERVER_HTTP_PORT}/"
 
 FIG_SIZE = (10, 7.5)
@@ -144,21 +144,22 @@ def render_hop_graph(root_msg: UnicastBase, nodes: list[SGNode], filename: str, 
         node_actual_key = int(parts[0].replace('node_', '')) # "node_100" -> 100
         node_level = int(parts[1]) if len(parts) > 1 else 0 # "@0" -> 0
 
-        mv_dummy_value = random.randint(0, 10000)
+        #mv_dummy_value = random.randint(0, 10000)
     
         sim_nodes_data_for_json.append({
             'key': node_actual_key,          # 元の数値キー
             'id': node_id_str,               # "key@level" 形式のID
             "position": {"x": 0, "y": 0, "z": 0},
             'level': node_level,             # レベル
-            'mv_value': mv_dummy_value,     # 2Dのingredientsからは直接取れないため、ここには仮の値
-                  
+            #'mv_value': mv_dummy_value,     # 2Dのingredientsからは直接取れないため、ここには仮の値
+            'mv_value': 0,
         })
 
         # デバッグ用にノード情報を表示--------------------------------------------------------------------
         print(f'key:{node_actual_key}')
         print(f'level:{node_level}')
-        print(f'mv_value:{mv_dummy_value}')
+        #print(f'mv_value:{mv_dummy_value}')
+        print(f'mv_value:{0}')
         print(f'id:{node_id_str}')
         print('---------------------------------------------------------------')
         #-----------------------------------------------------------------------------------------------

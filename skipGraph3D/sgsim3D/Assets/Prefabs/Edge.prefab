@@ -126,7 +126,7 @@ LineRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
@@ -276,5 +276,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sourceNodeId: 
   targetNodeId: 
-  hop: 
+  hop: 0
   edgeInfo3DTextPrefab: {fileID: 85242783405409953, guid: 38bf99f87c1619144b933087afe92ee6, type: 3}

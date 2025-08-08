@@ -33,7 +33,7 @@ class SimulationWorker(QObject):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-                encoding='utf-8',  # ★ 明示的にUTF-8指定
+                encoding='utf-8',  
                 bufsize=1,
                 universal_newlines=True,
                 creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0

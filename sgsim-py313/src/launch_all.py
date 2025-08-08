@@ -1,5 +1,3 @@
-# /mnt/c/Users/takuya/sgsim-py313/sgsim-py313/src/launch_all.py
-
 import subprocess
 import time
 import os
@@ -26,11 +24,6 @@ def convert_wsl_path_to_windows_format(wsl_path_obj: Path):
     if path_str.startswith("/mnt/") and len(path_str) >= 6 and path_str[5].isalpha():
         drive_letter = path_str[5].upper()
         rest_of_path = path_str[6:]
-        #  ここを修正！f-string内のバックスラッシュの問題を回避 
-        # rest_of_path.replace('/', '\\') の部分でエラーが出るため、
-        # ここでは .replace('/', os.sep) を使用するか、
-        # または f-stringの外で文字列結合を行う
-        # 最も簡単なのは、replace('\\') をそのまま使う方法です。
         return f"{drive_letter}:\\{rest_of_path.replace('/', os.sep)}" # os.sep はOSに応じたパス区切り文字
     return path_str
 
